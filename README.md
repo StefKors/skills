@@ -17,12 +17,6 @@ Claude does the analysis and asks a few multiple-choice questions per phase, so 
 npx skills add StefKors/co-design-skill
 ```
 
-## Claude Code plugin
-
-```bash
-/plugin marketplace add StefKors/co-design-skill
-```
-
 ## Layout
 
 ```
