@@ -1,0 +1,8 @@
+{
+  "name": "co-design",
+  "description": "Co-design a product feature with Claude in four phases: problem statement (5 Whys), insight statements, a visual process map, and clickable HTML prototype directions.",
+  "version": "1.0.0",
+  "author": { "name": "Stef Kors", "url": "https://github.com/StefKors" },
+  "repository": "https://github.com/StefKors/co-design-skill",
+  "license": "MIT"
+}

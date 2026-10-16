@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FEATURE — prototype directions</title>
+<style>
+  /* ── Design tokens: replace with the product's real values ─────────── */
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #f6f6f7;
+    --color-text: #1b1b1f;
+    --color-muted: #6b6b76;
+    --color-border: #e3e3e8;
+    --color-accent: #3b5bfd;
+    --color-accent-text: #ffffff;
+    --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --text-sm: 13px; --text-md: 15px; --text-lg: 20px;
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px;
+    --radius-sm: 6px; --radius-md: 10px;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / .06), 0 4px 12px rgb(0 0 0 / .06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-bg: #121214; --color-surface: #1c1c20; --color-text: #ededf0;
+      --color-muted: #9a9aa6; --color-border: #2c2c33;
+    }
+  }
+  :root[data-theme="dark"] {
+    --color-bg: #121214; --color-surface: #1c1c20; --color-text: #ededf0;
+    --color-muted: #9a9aa6; --color-border: #2c2c33;
+  }
+
+  /* ── Shell ─────────────────────────────────────────────────────────── */
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--color-bg); color: var(--color-text); font: var(--text-md)/1.5 var(--font-sans); }
+  .shell-bar { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center;
+    padding: var(--space-3) var(--space-4); background: var(--color-bg); border-bottom: 1px solid var(--color-border); }
+  .shell-bar h1 { font-size: var(--text-md); margin: 0 var(--space-4) 0 0; }
+  .tabs { display: flex; gap: var(--space-1); flex-wrap: wrap; }
+  .tab { border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text);
+    padding: var(--space-1) var(--space-3); border-radius: 999px; cursor: pointer; font: inherit; font-size: var(--text-sm); }
+  .tab[aria-selected="true"] { background: var(--color-accent); color: var(--color-accent-text); border-color: var(--color-accent); }
+  .rationale { flex-basis: 100%; margin: 0; color: var(--color-muted); font-size: var(--text-sm); }
+  .steps { display: flex; gap: var(--space-1); margin-left: auto; }
+  main { max-width: 1100px; margin: 0 auto; padding: var(--space-6) var(--space-4); }
+  .direction[hidden], .step[hidden] { display: none; }
+
+  /* ── Stand-in components (note which real component each maps to) ── */
+  /* <Button> */
+  .btn { border: 0; border-radius: var(--radius-sm); padding: var(--space-2) var(--space-4); font: inherit; cursor: pointer;
+    background: var(--color-surface); color: var(--color-text); }
+  .btn.primary { background: var(--color-accent); color: var(--color-accent-text); }
+  /* <Card> */
+  .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md);
+    padding: var(--space-4); box-shadow: var(--shadow-1); }
+
+  footer { max-width: 1100px; margin: 0 auto; padding: var(--space-6) var(--space-4); color: var(--color-muted); font-size: var(--text-sm); }
+</style>
+</head>
+<body>
+
+<header class="shell-bar">
+  <h1>FEATURE</h1>
+  <div class="tabs" role="tablist" id="direction-tabs"></div>
+  <div class="steps" id="step-nav"></div>
+  <p class="rationale" id="rationale"></p>
+</header>
+
+<main>
+  <!-- One <section class="direction"> per direction.
+       Inside, one <div class="step"> per step of the confirmed ideal process map. -->
+
+  <section class="direction" data-id="a" data-label="A · Direction name" data-rationale="One line on the idea. Answers I1, I2.">
+    <div class="step" data-step="1">
+      <div class="card">
+        <h2>Step 1 — Trigger</h2>
+        <p>Realistic content for this step.</p>
+        <button class="btn primary" data-next>Continue</button>
+      </div>
+    </div>
+    <div class="step" data-step="2">
+      <div class="card"><h2>Step 2</h2><p>…</p><button class="btn primary" data-next>Continue</button></div>
+    </div>
+    <div class="step" data-step="3">
+      <div class="card"><h2>Goal reached</h2><p>…</p></div>
+    </div>
+  </section>
+
+  <section class="direction" data-id="b" data-label="B · Direction name" data-rationale="One line on the idea. Answers I1, I3.">
+    <div class="step" data-step="1"><div class="card"><h2>Step 1</h2><p>…</p><button class="btn primary" data-next>Continue</button></div></div>
+    <div class="step" data-step="2"><div class="card"><h2>Step 2</h2><p>…</p><button class="btn primary" data-next>Continue</button></div></div>
+    <div class="step" data-step="3"><div class="card"><h2>Goal reached</h2><p>…</p></div></div>
+  </section>
+</main>
+
+<footer>
+  <strong>Changelog</strong>
+  <ul id="changelog"><li>v1 — initial directions.</li></ul>
+</footer>
+
+<script>
+  // Direction switcher + step navigation. Remembers the last view per viewer (best effort).
+  const dirs = [...document.querySelectorAll(".direction")];
+  const tabs = document.getElementById("direction-tabs");
+  const stepNav = document.getElementById("step-nav");
+  const rationale = document.getElementById("rationale");
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  };
+  let current = { dir: store.get("cd-dir") || dirs[0].dataset.id, step: 1 };
+
+  dirs.forEach(d => {
+    const b = document.createElement("button");
+    b.className = "tab"; b.role = "tab"; b.textContent = d.dataset.label; b.dataset.id = d.dataset.id;
+    b.onclick = () => show(d.dataset.id, 1);
+    tabs.append(b);
+  });
+
+  function show(dirId, step) {
+    const dir = dirs.find(d => d.dataset.id === dirId) || dirs[0];
+    const steps = [...dir.querySelectorAll(".step")];
+    step = Math.min(Math.max(step, 1), steps.length);
+    current = { dir: dir.dataset.id, step };
+    store.set("cd-dir", dir.dataset.id);
+    dirs.forEach(d => d.hidden = d !== dir);
+    steps.forEach((s, i) => s.hidden = i + 1 !== step);
+    [...tabs.children].forEach(t => t.setAttribute("aria-selected", t.dataset.id === dir.dataset.id));
+    rationale.textContent = dir.dataset.rationale || "";
+    stepNav.innerHTML = "";
+    steps.forEach((_, i) => {
+      const b = document.createElement("button");
+      b.className = "tab"; b.textContent = i + 1;
+      b.setAttribute("aria-selected", i + 1 === step);
+      b.onclick = () => show(dir.dataset.id, i + 1);
+      stepNav.append(b);
+    });
+  }
+
+  document.addEventListener("click", e => {
+    if (e.target.closest("[data-next]")) show(current.dir, current.step + 1);
+    if (e.target.closest("[data-prev]")) show(current.dir, current.step - 1);
+  });
+
+  show(current.dir, 1);
+</script>
+
+<!-- Agentation toolbar: click any element to leave feedback for Claude.
+     Serve this page from localhost (not file://) and keep endpoint in sync with the agentation-mcp server port. -->
+<div id="agentation-root"></div>
+<script type="module">
+  import React from "https://esm.sh/react@18";
+  import { createRoot } from "https://esm.sh/react-dom@18/client";
+  import { Agentation } from "https://esm.sh/agentation@3?deps=react@18,react-dom@18";
+  createRoot(document.getElementById("agentation-root"))
+    .render(React.createElement(Agentation, { endpoint: "http://localhost:4747" }));
+</script>
+</body>
+</html>
