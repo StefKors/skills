@@ -1,6 +1,6 @@
 # co-design
 
-[![skills.sh](https://skills.sh/b/StefKors/co-design-skill)](https://skills.sh/StefKors/co-design-skill)
+[![skills.sh](https://skills.sh/b/StefKors/skills)](https://skills.sh/StefKors/skills)
 
 An agent skill for co-designing a product feature with Claude in four quick phases:
 
@@ -14,7 +14,7 @@ Claude does the analysis and asks a few multiple-choice questions per phase, so 
 ## Install
 
 ```bash
-npx skills add StefKors/co-design-skill
+npx skills add StefKors/skills
 ```
 
 ## Layout
